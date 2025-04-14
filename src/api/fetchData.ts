@@ -14,6 +14,8 @@ interface SentimentData {
   'in-flight-feedback'?: string[];
   'post-flight-sentiment'?: string;
   'post-flight-feedback'?: string[];
+  'Total'?: number | string;
+  'total'?: number | string;
 }
 
 export async function fetchSentimentData(): Promise<SentimentData> {
@@ -49,6 +51,7 @@ export async function fetchSentimentData(): Promise<SentimentData> {
       'post-flight-feedback': Array.isArray(rawData['Post-flight-feedback'] || rawData['post-flight-feedback'])
         ? rawData['Post-flight-feedback'] || rawData['post-flight-feedback']
         : [rawData['Post-flight-feedback'] || rawData['post-flight-feedback'] || ''],
+      'Total': rawData['Total'] || rawData['total'] || 0,
     };
 
     console.log('Normalized data:', normalizedData);
@@ -63,6 +66,7 @@ export async function fetchSentimentData(): Promise<SentimentData> {
       'in-flight-feedback': [],
       'post-flight-sentiment': '',
       'post-flight-feedback': [],
+      'Total': 0,
     };
   }
 }

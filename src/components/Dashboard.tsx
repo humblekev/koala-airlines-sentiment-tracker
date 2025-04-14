@@ -27,6 +27,7 @@ const ensureFeedbackArray = (feedback: string | string[] | undefined): string[] 
 const Dashboard: React.FC = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [dataPointsCount, setDataPointsCount] = useState(0);
   const [data, setData] = useState({
     'pre-flight-sentiment': '' as SentimentType,
     'pre-flight-feedback': [] as string[],
@@ -42,6 +43,10 @@ const Dashboard: React.FC = () => {
     try {
       const newData = await fetchSentimentData();
       console.log('Data received from API:', newData);
+      
+      // Get total data points if available
+      const totalDataPoints = Number(newData['Total'] || newData['total'] || 0);
+      setDataPointsCount(totalDataPoints);
       
       // Transform the data to ensure sentiment values are valid SentimentType
       setData({
@@ -76,7 +81,11 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <Header onRefresh={handleRefresh} isLoading={isLoading} />
+      <Header 
+        onRefresh={handleRefresh} 
+        isLoading={isLoading}
+        dataPointsCount={dataPointsCount}
+      />
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <SentimentCard
@@ -97,6 +106,10 @@ const Dashboard: React.FC = () => {
           feedback={data['post-flight-feedback']}
           isLoading={isLoading}
         />
+      </div>
+      
+      <div className="mt-16 mb-4 text-center">
+        <p className="text-gray-500 italic text-sm">For demo purposes only</p>
       </div>
     </div>
   );
