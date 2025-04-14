@@ -6,13 +6,22 @@ import SentimentCard, { SentimentType } from './SentimentCard';
 import { fetchSentimentData } from '@/api/fetchData';
 
 // Helper function to validate sentiment type
-const validateSentimentType = (sentiment: string): SentimentType => {
+const validateSentimentType = (sentiment: string | undefined): SentimentType => {
+  if (!sentiment) return '' as SentimentType;
+  
   const validTypes: SentimentType[] = ['Positive', 'Negative', 'Neutral', 'Mixed', ''];
   const capitalizedSentiment = sentiment.charAt(0).toUpperCase() + sentiment.slice(1).toLowerCase();
   
   return validTypes.includes(capitalizedSentiment as SentimentType) 
     ? capitalizedSentiment as SentimentType 
     : '' as SentimentType;
+};
+
+// Helper function to ensure feedback is an array
+const ensureFeedbackArray = (feedback: string | string[] | undefined): string[] => {
+  if (!feedback) return [];
+  if (typeof feedback === 'string') return [feedback];
+  return feedback;
 };
 
 const Dashboard: React.FC = () => {
@@ -32,15 +41,16 @@ const Dashboard: React.FC = () => {
 
     try {
       const newData = await fetchSentimentData();
+      console.log('Data received from API:', newData);
       
       // Transform the data to ensure sentiment values are valid SentimentType
       setData({
         'pre-flight-sentiment': validateSentimentType(newData['pre-flight-sentiment']),
-        'pre-flight-feedback': newData['pre-flight-feedback'] || [],
+        'pre-flight-feedback': ensureFeedbackArray(newData['pre-flight-feedback']),
         'in-flight-sentiment': validateSentimentType(newData['in-flight-sentiment']),
-        'in-flight-feedback': newData['in-flight-feedback'] || [],
+        'in-flight-feedback': ensureFeedbackArray(newData['in-flight-feedback']),
         'post-flight-sentiment': validateSentimentType(newData['post-flight-sentiment']),
-        'post-flight-feedback': newData['post-flight-feedback'] || [],
+        'post-flight-feedback': ensureFeedbackArray(newData['post-flight-feedback']),
       });
       
       toast({
