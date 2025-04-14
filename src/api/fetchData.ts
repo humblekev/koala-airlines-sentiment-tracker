@@ -1,4 +1,3 @@
-
 import { SentimentType } from '@/components/SentimentCard';
 
 interface SentimentData {
@@ -16,11 +15,12 @@ interface SentimentData {
   'post-flight-feedback'?: string[];
   'Total'?: number | string;
   'total'?: number | string;
+  'Allcomments'?: string;
 }
 
 export async function fetchSentimentData(): Promise<SentimentData> {
   try {
-    const response = await fetch('https://mindsmerge.app.n8n.cloud/webhook-test/4c157b62-6a67-4856-a4c9-96d6381c674f', {
+    const response = await fetch('https://n8n-1-u40928.vm.elestio.app/webhook-test/46cf7941-6c47-435b-8711-1f9c83dec351', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -52,6 +52,7 @@ export async function fetchSentimentData(): Promise<SentimentData> {
         ? rawData['Post-flight-feedback'] || rawData['post-flight-feedback']
         : [rawData['Post-flight-feedback'] || rawData['post-flight-feedback'] || ''],
       'Total': rawData['Total'] || rawData['total'] || 0,
+      'Allcomments': rawData['Allcomments'] || '',
     };
 
     console.log('Normalized data:', normalizedData);
@@ -67,6 +68,7 @@ export async function fetchSentimentData(): Promise<SentimentData> {
       'post-flight-sentiment': '',
       'post-flight-feedback': [],
       'Total': 0,
+      'Allcomments': '',
     };
   }
 }

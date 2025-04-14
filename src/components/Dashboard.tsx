@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import Header from './Header';
 import SentimentCard, { SentimentType } from './SentimentCard';
+import ScrollingBanner from './ScrollingBanner';
 import { fetchSentimentData } from '@/api/fetchData';
 
 // Helper function to validate sentiment type
@@ -28,6 +28,7 @@ const Dashboard: React.FC = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [dataPointsCount, setDataPointsCount] = useState(0);
+  const [comments, setComments] = useState('');
   const [data, setData] = useState({
     'pre-flight-sentiment': '' as SentimentType,
     'pre-flight-feedback': [] as string[],
@@ -44,11 +45,9 @@ const Dashboard: React.FC = () => {
       const newData = await fetchSentimentData();
       console.log('Data received from API:', newData);
       
-      // Get total data points if available
-      const totalDataPoints = Number(newData['Total'] || newData['total'] || 0);
-      setDataPointsCount(totalDataPoints);
+      setDataPointsCount(Number(newData['Total'] || newData['total'] || 0));
+      setComments(newData['Allcomments'] || '');
       
-      // Transform the data to ensure sentiment values are valid SentimentType
       setData({
         'pre-flight-sentiment': validateSentimentType(newData['pre-flight-sentiment']),
         'pre-flight-feedback': ensureFeedbackArray(newData['pre-flight-feedback']),
@@ -74,7 +73,6 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Load data when component mounts
   useEffect(() => {
     handleRefresh();
   }, []);
@@ -108,9 +106,11 @@ const Dashboard: React.FC = () => {
         />
       </div>
       
-      <div className="mt-16 mb-4 text-center">
+      <div className="mt-16 mb-12 text-center">
         <p className="text-gray-500 italic text-sm">For demo purposes only</p>
       </div>
+
+      <ScrollingBanner text={comments} />
     </div>
   );
 };
