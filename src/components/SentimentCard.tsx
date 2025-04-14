@@ -17,6 +17,8 @@ const SentimentCard: React.FC<SentimentCardProps> = ({
   isLoading
 }) => {
   const getSentimentColorClass = () => {
+    if (!sentiment) return '';
+    
     switch (sentiment.toLowerCase()) {
       case 'positive':
         return 'sentiment-card-positive';
@@ -32,6 +34,8 @@ const SentimentCard: React.FC<SentimentCardProps> = ({
   };
 
   const getSentimentTextColor = () => {
+    if (!sentiment) return 'text-gray-500';
+    
     switch (sentiment.toLowerCase()) {
       case 'positive':
         return 'text-positive';

@@ -1,4 +1,6 @@
 
+import { SentimentType } from '@/components/SentimentCard';
+
 interface SentimentData {
   'pre-flight-sentiment': string;
   'pre-flight-feedback': string[];
