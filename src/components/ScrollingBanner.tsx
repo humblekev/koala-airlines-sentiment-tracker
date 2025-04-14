@@ -24,7 +24,7 @@ const ScrollingBanner: React.FC<ScrollingBannerProps> = ({ text }) => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .scrolling-text-container {
           overflow: hidden;
           width: 100%;
