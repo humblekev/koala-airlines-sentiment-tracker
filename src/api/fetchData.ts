@@ -20,6 +20,9 @@ interface SentimentData {
 
 export async function fetchSentimentData(): Promise<SentimentData> {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000); // 5 minutes timeout
+
     const response = await fetch('https://n8n-1-u40928.vm.elestio.app/webhook-test/46cf7941-6c47-435b-8711-1f9c83dec351', {
       method: 'POST',
       headers: {
@@ -28,7 +31,10 @@ export async function fetchSentimentData(): Promise<SentimentData> {
       body: JSON.stringify({
         requestTime: new Date().toISOString()
       }),
+      signal: controller.signal
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
