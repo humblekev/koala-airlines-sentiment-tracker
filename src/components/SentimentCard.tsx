@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { PlaneTakeoff, Plane, PlaneLanding } from 'lucide-react';
 
@@ -64,6 +63,19 @@ const SentimentCard: React.FC<SentimentCardProps> = ({
     }
   };
 
+  const processedFeedback = React.useMemo(() => {
+    if (!feedback || feedback.length === 0) return [];
+    
+    const result: string[] = [];
+    
+    feedback.forEach(item => {
+      const sentences = item.split(/(?<=\.)/).filter(s => s.trim().length > 0);
+      result.push(...sentences);
+    });
+    
+    return result.map(item => item.trim()).filter(item => item.length > 0);
+  }, [feedback]);
+
   return (
     <div className={`sentiment-card ${getSentimentColorClass()} animate-fade-in hover:shadow-lg transition-all duration-300`}>
       <div className="flex justify-between items-center mb-6">
@@ -90,9 +102,9 @@ const SentimentCard: React.FC<SentimentCardProps> = ({
           
           <div className="space-y-3">
             <h4 className="font-medium text-gray-600 text-lg">Key Feedback Areas:</h4>
-            {feedback && feedback.length > 0 ? (
+            {processedFeedback && processedFeedback.length > 0 ? (
               <ul className="space-y-2 ml-5 list-disc text-gray-700">
-                {feedback.map((item, index) => (
+                {processedFeedback.map((item, index) => (
                   <li key={index} className="text-base">{item}</li>
                 ))}
               </ul>
