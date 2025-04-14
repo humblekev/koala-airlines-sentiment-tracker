@@ -20,8 +20,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'playfair': ['Playfair Display', 'serif'],
-				'inter': ['Inter', 'sans-serif'],
+				'dm-sans': ['DM Sans', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -67,26 +66,26 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Sentiment colors
+				// Sentiment colors with warmer tones
 				positive: {
 					light: '#F2FCE2',
-					DEFAULT: '#33C3F0',
-					dark: '#0E94C1'
+					DEFAULT: '#4CAF50',
+					dark: '#2E7D32'
 				},
 				negative: {
 					light: '#FDE2E2',
-					DEFAULT: '#ea384c',
-					dark: '#C41C2D'
+					DEFAULT: '#E57373',
+					dark: '#C62828'
 				},
 				neutral: {
-					light: '#F1F5F9',
-					DEFAULT: '#8E9196',
-					dark: '#64676B'
+					light: '#F5F5F5',
+					DEFAULT: '#9E9E9E',
+					dark: '#616161'
 				},
 				mixed: {
-					light: '#FFF3E6',
-					DEFAULT: '#FEC6A1', 
-					dark: '#F49B68'
+					light: '#FFF3E0',
+					DEFAULT: '#FFB74D', 
+					dark: '#F57C00'
 				}
 			},
 			borderRadius: {
@@ -113,7 +112,7 @@ export default {
 				},
 				'pulse-opacity': {
 					'0%, 100%': { opacity: '1' },
-					'50%': { opacity: '0.6' }
+					'50%': { opacity: '0.5' }
 				},
 				'fadeIn': {
 					'0%': { opacity: '0', transform: 'translateY(10px)' },

@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { PlaneTakeoff, Plane, PlaneLanding } from 'lucide-react';
 
 export type SentimentType = 'Positive' | 'Negative' | 'Neutral' | 'Mixed' | '';
 
@@ -50,15 +51,31 @@ const SentimentCard: React.FC<SentimentCardProps> = ({
     }
   };
 
+  const getPhaseIcon = () => {
+    switch (phase) {
+      case 'Pre-Flight':
+        return <PlaneTakeoff className="h-6 w-6" />;
+      case 'In-Flight':
+        return <Plane className="h-6 w-6" />;
+      case 'Post-Flight':
+        return <PlaneLanding className="h-6 w-6" />;
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className={`sentiment-card ${getSentimentColorClass()} animate-fade-in`}>
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-medium text-gray-700">{phase}</h3>
+    <div className={`sentiment-card ${getSentimentColorClass()} animate-fade-in hover:shadow-lg transition-all duration-300`}>
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center gap-2">
+          {getPhaseIcon()}
+          <h3 className="text-xl font-medium text-gray-700">{phase}</h3>
+        </div>
       </div>
       
       {isLoading ? (
         <div className="flex flex-col space-y-4">
-          <div className="h-12 bg-gray-200 rounded animate-pulse"></div>
+          <div className="h-14 bg-gray-200 rounded-md animate-pulse"></div>
           <div className="space-y-2">
             <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
             <div className="h-4 bg-gray-200 rounded w-5/6 animate-pulse"></div>
@@ -67,16 +84,16 @@ const SentimentCard: React.FC<SentimentCardProps> = ({
         </div>
       ) : (
         <>
-          <h2 className={`text-4xl font-bold mb-4 ${getSentimentTextColor()}`}>
+          <h2 className={`text-5xl font-bold mb-6 ${getSentimentTextColor()}`}>
             {sentiment || 'No Data'}
           </h2>
           
-          <div className="space-y-2">
-            <h4 className="font-medium text-gray-600">Key Feedback Areas:</h4>
+          <div className="space-y-3">
+            <h4 className="font-medium text-gray-600 text-lg">Key Feedback Areas:</h4>
             {feedback && feedback.length > 0 ? (
               <ul className="space-y-2 ml-5 list-disc text-gray-700">
                 {feedback.map((item, index) => (
-                  <li key={index}>{item}</li>
+                  <li key={index} className="text-base">{item}</li>
                 ))}
               </ul>
             ) : (

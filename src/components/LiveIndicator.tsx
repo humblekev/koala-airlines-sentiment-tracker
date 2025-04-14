@@ -3,9 +3,9 @@ import React from 'react';
 
 const LiveIndicator: React.FC = () => {
   return (
-    <div className="inline-flex items-center px-2 py-1 rounded-full bg-positive-light">
-      <div className="w-2 h-2 rounded-full bg-positive mr-1.5 animate-pulse"></div>
-      <span className="text-xs font-semibold text-positive-dark">LIVE</span>
+    <div className="inline-flex items-center px-4 py-2 rounded-full bg-red-100 shadow-sm">
+      <div className="w-4 h-4 rounded-full bg-red-500 mr-2 animate-pulse"></div>
+      <span className="text-base font-bold text-red-600 tracking-wider">LIVE</span>
     </div>
   );
 };

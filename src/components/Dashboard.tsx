@@ -75,10 +75,10 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-7xl">
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
       <Header onRefresh={handleRefresh} isLoading={isLoading} />
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <SentimentCard
           phase="Pre-Flight"
           sentiment={data['pre-flight-sentiment']}
