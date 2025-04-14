@@ -48,16 +48,18 @@ const Header: React.FC<HeaderProps> = ({ onRefresh, isLoading, dataPointsCount =
           </h1>
           <div className="mt-6 flex flex-col items-center">
             <div className="bg-gradient-to-r from-gray-50 to-slate-100 rounded-xl px-8 py-4 shadow-md border border-gray-200">
-              <div className="flex items-center gap-4">
-                <User className="h-7 w-7 text-gray-600" />
-                <span className="text-gray-600 text-xl font-medium">
-                  Customer Data Points Analysed
-                </span>
-              </div>
-              <div className="mt-3 bg-white rounded-lg px-6 py-3 shadow-sm border border-gray-100">
-                <span className="text-3xl font-bold text-gray-800">
-                  {dataPointsCount.toLocaleString()}
-                </span>
+              <div className="flex items-center gap-4 justify-between">
+                <div className="flex items-center gap-4">
+                  <User className="h-7 w-7 text-gray-600" />
+                  <span className="text-gray-600 text-xl font-medium">
+                    Customer Data Points Analysed
+                  </span>
+                </div>
+                <div className="ml-6 bg-white rounded-lg px-6 py-3 shadow-sm border border-gray-100">
+                  <span className="text-3xl font-bold text-gray-800">
+                    {dataPointsCount.toLocaleString()}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
