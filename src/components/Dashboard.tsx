@@ -61,22 +61,18 @@ const getFromLocalStorage = (key: string, defaultValue: any) => {
 const Dashboard: React.FC = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [dataPointsCount, setDataPointsCount] = useState(() => 
-    getFromLocalStorage(STORAGE_KEYS.DATA_POINTS, 0)
-  );
-  const [comments, setComments] = useState(() => 
-    getFromLocalStorage(STORAGE_KEYS.COMMENTS, '')
-  );
-  const [data, setData] = useState(() => 
-    getFromLocalStorage(STORAGE_KEYS.SENTIMENT_DATA, {
-      'pre-flight-sentiment': '' as SentimentType,
-      'pre-flight-feedback': [] as string[],
-      'in-flight-sentiment': '' as SentimentType,
-      'in-flight-feedback': [] as string[],
-      'post-flight-sentiment': '' as SentimentType,
-      'post-flight-feedback': [] as string[],
-    })
-  );
+  
+  // Initialize with empty/default values instead of checking localStorage
+  const [dataPointsCount, setDataPointsCount] = useState(0);
+  const [comments, setComments] = useState('');
+  const [data, setData] = useState({
+    'pre-flight-sentiment': '' as SentimentType,
+    'pre-flight-feedback': [] as string[],
+    'in-flight-sentiment': '' as SentimentType,
+    'in-flight-feedback': [] as string[],
+    'post-flight-sentiment': '' as SentimentType,
+    'post-flight-feedback': [] as string[],
+  });
 
   const handleRefresh = async () => {
     console.log('Refresh initiated');
@@ -112,7 +108,7 @@ const Dashboard: React.FC = () => {
         setComments(newComments);
         setData(updatedData);
         
-        // Store data in local storage
+        // Store data in local storage (we're still storing it, but not using it on initial load)
         saveToLocalStorage(STORAGE_KEYS.DATA_POINTS, dataPoints);
         saveToLocalStorage(STORAGE_KEYS.COMMENTS, newComments);
         saveToLocalStorage(STORAGE_KEYS.SENTIMENT_DATA, updatedData);
@@ -194,8 +190,8 @@ const Dashboard: React.FC = () => {
         <p className="text-gray-500 italic text-sm">For demo purposes only. © KD</p>
       </div>
 
-      {/* Pass the comments data to the ScrollingBanner component */}
-      <ScrollingBanner text={comments} />
+      {/* Only display the ScrollingBanner if comments exist */}
+      {comments && <ScrollingBanner text={comments} />}
     </div>
   );
 };

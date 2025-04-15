@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { RefreshCw, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -60,12 +61,12 @@ const Header: React.FC<HeaderProps> = ({ onRefresh, isLoading, dataPointsCount =
                 </div>
                 <div className="ml-6 bg-white rounded-lg px-6 py-3 shadow-sm border border-gray-100">
                   {isLoading ? (
-                    <span className="text-3xl font-bold text-gray-500">
-                      Loading...
+                    <span className="text-3xl font-bold text-gray-500 min-h-[48px] min-w-[80px] flex items-center justify-center">
+                      {/* Empty space while loading */}
                     </span>
                   ) : (
                     <span className="text-3xl font-bold text-gray-800">
-                      {dataPointsCount.toLocaleString()}
+                      {dataPointsCount > 0 ? dataPointsCount.toLocaleString() : ''}
                     </span>
                   )}
                 </div>
