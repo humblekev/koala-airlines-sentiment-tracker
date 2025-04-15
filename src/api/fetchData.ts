@@ -38,15 +38,15 @@ export async function fetchSentimentData(): Promise<SentimentData> {
 
     console.log('Sending request to API...', apiUrl);
     
-    // Using a longer timeout - 4 minutes to be safe
-    const timeoutDuration = 240000; // 4 minutes in milliseconds
+    // Using an even longer timeout - 8 minutes to be safe
+    const timeoutDuration = 480000; // 8 minutes in milliseconds
     
     let timeoutId: NodeJS.Timeout;
     
     // Create a promise for the timeout
     const timeoutPromise = new Promise<never>((_, reject) => {
       timeoutId = setTimeout(() => {
-        reject(new Error('API request timed out after 4 minutes'));
+        reject(new Error('API request timed out after 8 minutes'));
       }, timeoutDuration);
     });
     
@@ -64,6 +64,11 @@ export async function fetchSentimentData(): Promise<SentimentData> {
 
       const rawData = await response.json();
       console.log('Raw API response:', rawData);
+      
+      // Validate that we actually received data
+      if (!rawData || typeof rawData !== 'object') {
+        throw new Error('Invalid response format from API');
+      }
       
       // Normalize the data format
       const normalizedData = {

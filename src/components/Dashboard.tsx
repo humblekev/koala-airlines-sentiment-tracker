@@ -46,22 +46,26 @@ const Dashboard: React.FC = () => {
       const newData = await fetchSentimentData();
       console.log('Data received from API:', newData);
       
-      setDataPointsCount(Number(newData['Total'] || newData['total'] || 0));
-      setComments(newData['Allcomments'] || '');
-      
-      setData({
-        'pre-flight-sentiment': validateSentimentType(newData['pre-flight-sentiment']),
-        'pre-flight-feedback': ensureFeedbackArray(newData['pre-flight-feedback']),
-        'in-flight-sentiment': validateSentimentType(newData['in-flight-sentiment']),
-        'in-flight-feedback': ensureFeedbackArray(newData['in-flight-feedback']),
-        'post-flight-sentiment': validateSentimentType(newData['post-flight-sentiment']),
-        'post-flight-feedback': ensureFeedbackArray(newData['post-flight-feedback']),
-      });
-      
-      toast({
-        title: "Data refreshed",
-        description: "Latest sentiment data has been loaded",
-      });
+      // Only update state and show success toast if we received actual data
+      if (newData) {
+        setDataPointsCount(Number(newData['Total'] || newData['total'] || 0));
+        setComments(newData['Allcomments'] || '');
+        
+        setData({
+          'pre-flight-sentiment': validateSentimentType(newData['pre-flight-sentiment']),
+          'pre-flight-feedback': ensureFeedbackArray(newData['pre-flight-feedback']),
+          'in-flight-sentiment': validateSentimentType(newData['in-flight-sentiment']),
+          'in-flight-feedback': ensureFeedbackArray(newData['in-flight-feedback']),
+          'post-flight-sentiment': validateSentimentType(newData['post-flight-sentiment']),
+          'post-flight-feedback': ensureFeedbackArray(newData['post-flight-feedback']),
+        });
+        
+        // Only show success toast when we actually get data back from API
+        toast({
+          title: "Data refreshed",
+          description: "Latest sentiment data has been loaded",
+        });
+      }
     } catch (error) {
       console.error('Failed to refresh data:', error);
       toast({

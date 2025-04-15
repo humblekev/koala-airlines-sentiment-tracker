@@ -14,7 +14,7 @@ const ScrollingBanner: React.FC<ScrollingBannerProps> = ({ text }) => {
   return (
     <div className="w-full bg-amber-500 overflow-hidden fixed bottom-0 left-0 py-3">
       <div className="scrolling-text-container">
-        <div className="whitespace-nowrap animate-[scroll_240s_linear_infinite] inline-block">
+        <div className="whitespace-nowrap animate-[scroll_90s_linear_infinite] inline-block">
           <span className="inline-block px-4 text-white font-medium text-lg">
             {repeatedComments}
           </span>
@@ -39,8 +39,8 @@ const ScrollingBanner: React.FC<ScrollingBannerProps> = ({ text }) => {
           }
         }
         
-        .animate-\\[scroll_240s_linear_infinite\\] {
-          animation: scroll 240s linear infinite;
+        .animate-\\[scroll_90s_linear_infinite\\] {
+          animation: scroll 90s linear infinite;
           display: inline-block;
           will-change: transform;
         }
