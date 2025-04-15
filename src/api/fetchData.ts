@@ -24,29 +24,40 @@ export async function fetchSentimentData(): Promise<SentimentData> {
     // Define the API URL
     const apiUrl = 'https://n8n-1-u40928.vm.elestio.app/webhook/46cf7941-6c47-435b-8711-1f9c83dec351';
     
-    // Set up request options with no timeout limit
+    // Add a unique timestamp to prevent caching issues
+    const timestamp = new Date().getTime();
+    const urlWithTimestamp = `${apiUrl}?t=${timestamp}`;
+    
+    console.log('Sending request to API with timestamp:', urlWithTimestamp);
+    
+    // Set up request options with stronger cache control
     const options = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
       },
       body: JSON.stringify({
-        requestTime: new Date().toISOString()
+        requestTime: new Date().toISOString(),
+        deviceInfo: {
+          platform: navigator.platform,
+          userAgent: navigator.userAgent,
+          timestamp: timestamp
+        }
       }),
     };
-
-    console.log('Sending request to API...', apiUrl);
     
-    // Using a longer timeout - 5 minutes to be safe
-    const timeoutDuration = 300000; // 5 minutes in milliseconds
+    // Using a reasonable timeout - 60 seconds
+    const timeoutDuration = 60000;
     
     let timeoutId: NodeJS.Timeout;
     
     // Create a promise for the timeout
     const timeoutPromise = new Promise<never>((_, reject) => {
       timeoutId = setTimeout(() => {
-        reject(new Error('API request timed out after 5 minutes'));
+        reject(new Error('API request timed out after 60 seconds'));
       }, timeoutDuration);
     });
     
@@ -64,11 +75,16 @@ export async function fetchSentimentData(): Promise<SentimentData> {
         credentials: 'omit' as RequestCredentials,
       };
       
-      const fetchPromise = fetch(apiUrl, fetchOptions);
+      console.log('Fetch options:', JSON.stringify(fetchOptions, (key, value) => 
+        key === 'signal' ? '[AbortSignal]' : value
+      ));
+      
+      const fetchPromise = fetch(urlWithTimestamp, fetchOptions);
       
       // Clear timeout on successful completion
       const clearTimeoutAndReturn = (response: Response) => {
         clearTimeout(timeoutId);
+        console.log('Response received, status:', response.status);
         return response;
       };
       
@@ -80,6 +96,7 @@ export async function fetchSentimentData(): Promise<SentimentData> {
       // When timeout occurs, abort the fetch to free resources
       timeoutPromise.catch(() => {
         controller.abort();
+        console.error('Request aborted due to timeout');
       });
       
       if (!response.ok) {
@@ -117,6 +134,7 @@ export async function fetchSentimentData(): Promise<SentimentData> {
     } catch (fetchError) {
       // Make sure to clear the timeout if fetch fails
       clearTimeout(timeoutId);
+      console.error('Fetch error details:', fetchError);
       throw fetchError;
     }
   } catch (error) {

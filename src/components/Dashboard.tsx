@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import Header from './Header';
@@ -9,7 +10,8 @@ import { fetchSentimentData } from '@/api/fetchData';
 const STORAGE_KEYS = {
   DATA_POINTS: 'sentiment-data-points',
   COMMENTS: 'sentiment-comments',
-  SENTIMENT_DATA: 'sentiment-data'
+  SENTIMENT_DATA: 'sentiment-data',
+  LAST_REFRESH: 'last-refresh-time'
 };
 
 // Helper function to validate sentiment type
@@ -35,6 +37,7 @@ const ensureFeedbackArray = (feedback: string | string[] | undefined): string[] 
 const saveToLocalStorage = (key: string, data: any) => {
   try {
     localStorage.setItem(key, JSON.stringify(data));
+    console.log(`Saved to localStorage: ${key}`);
   } catch (error) {
     console.error('Error saving to localStorage:', error);
   }
@@ -43,9 +46,14 @@ const saveToLocalStorage = (key: string, data: any) => {
 const getFromLocalStorage = (key: string, defaultValue: any) => {
   try {
     const storedValue = localStorage.getItem(key);
-    return storedValue ? JSON.parse(storedValue) : defaultValue;
+    if (!storedValue) {
+      console.log(`No value found in localStorage for ${key}, using default`);
+      return defaultValue;
+    }
+    console.log(`Retrieved from localStorage: ${key}`);
+    return JSON.parse(storedValue);
   } catch (error) {
-    console.error('Error reading from localStorage:', error);
+    console.error(`Error reading from localStorage (${key}):`, error);
     return defaultValue;
   }
 };
@@ -71,9 +79,15 @@ const Dashboard: React.FC = () => {
   );
 
   const handleRefresh = async () => {
+    console.log('Refresh initiated');
     setIsLoading(true);
 
     try {
+      // Record refresh attempt
+      const refreshTime = new Date().toISOString();
+      saveToLocalStorage(STORAGE_KEYS.LAST_REFRESH, refreshTime);
+      console.log('Refresh attempt recorded at:', refreshTime);
+
       const newData = await fetchSentimentData();
       console.log('Data received from API:', newData);
       
@@ -91,6 +105,8 @@ const Dashboard: React.FC = () => {
           'post-flight-feedback': ensureFeedbackArray(newData['post-flight-feedback']),
         };
         
+        console.log('Updating state with new data');
+        
         // Update state
         setDataPointsCount(dataPoints);
         setComments(newComments);
@@ -106,6 +122,15 @@ const Dashboard: React.FC = () => {
           title: "Data refreshed",
           description: "Latest sentiment data has been loaded",
         });
+        
+        console.log('Refresh completed successfully');
+      } else {
+        console.warn('No data received from API');
+        toast({
+          title: "Warning",
+          description: "No new data received. Please try again.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error('Failed to refresh data:', error);
@@ -116,11 +141,24 @@ const Dashboard: React.FC = () => {
       });
     } finally {
       setIsLoading(false);
+      console.log('Loading state set to false');
     }
   };
 
   useEffect(() => {
+    console.log('Dashboard mounted, initializing data');
     handleRefresh();
+    
+    // Add console logging for debugging
+    console.log('Initial state:', {
+      dataPointsCount,
+      comments: comments ? comments.substring(0, 50) + '...' : 'none',
+      data: {
+        'pre-flight-sentiment': data['pre-flight-sentiment'],
+        'in-flight-sentiment': data['in-flight-sentiment'],
+        'post-flight-sentiment': data['post-flight-sentiment'],
+      }
+    });
   }, []);
 
   return (

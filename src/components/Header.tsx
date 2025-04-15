@@ -27,6 +27,7 @@ const Header: React.FC<HeaderProps> = ({ onRefresh, isLoading, dataPointsCount =
             disabled={isLoading} 
             className="bg-amber-500 hover:bg-amber-600 px-8 py-3 text-white rounded-lg transition-all duration-300 text-lg font-medium shadow-md"
             size="lg"
+            aria-label={isLoading ? "Refreshing data" : "Refresh data"}
           >
             <RefreshCw className={`h-6 w-6 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             {isLoading ? 'Refreshing...' : 'Refresh Data'}
@@ -40,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ onRefresh, isLoading, dataPointsCount =
       <div className="flex flex-col items-center mt-28 md:mt-16 w-full">
         <div className="w-32 h-32 md:w-36 md:h-36 mb-4">
           <img 
-            src="/lovable-uploads/7c055872-73b4-4696-82af-526dddc5c4a6.png" 
+            src="/lovable-uploads/3abccc84-9c4d-4f5e-aa35-20f4dc79fbdf.png" 
             alt="Koala Airline Logo" 
             className="w-full h-full object-contain"
           />
