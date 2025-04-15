@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import Header from './Header';
@@ -157,6 +156,7 @@ const Dashboard: React.FC = () => {
         <p className="text-gray-500 italic text-sm">For demo purposes only. © KD</p>
       </div>
 
+      {/* Pass the comments data to the ScrollingBanner component */}
       <ScrollingBanner text={comments} />
     </div>
   );
