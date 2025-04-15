@@ -6,6 +6,13 @@ import SentimentCard, { SentimentType } from './SentimentCard';
 import ScrollingBanner from './ScrollingBanner';
 import { fetchSentimentData } from '@/api/fetchData';
 
+// Local storage keys
+const STORAGE_KEYS = {
+  DATA_POINTS: 'sentiment-data-points',
+  COMMENTS: 'sentiment-comments',
+  SENTIMENT_DATA: 'sentiment-data'
+};
+
 // Helper function to validate sentiment type
 const validateSentimentType = (sentiment: string | undefined): SentimentType => {
   if (!sentiment) return '' as SentimentType;
@@ -25,19 +32,44 @@ const ensureFeedbackArray = (feedback: string | string[] | undefined): string[] 
   return feedback;
 };
 
+// Helper functions for local storage
+const saveToLocalStorage = (key: string, data: any) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (error) {
+    console.error('Error saving to localStorage:', error);
+  }
+};
+
+const getFromLocalStorage = (key: string, defaultValue: any) => {
+  try {
+    const storedValue = localStorage.getItem(key);
+    return storedValue ? JSON.parse(storedValue) : defaultValue;
+  } catch (error) {
+    console.error('Error reading from localStorage:', error);
+    return defaultValue;
+  }
+};
+
 const Dashboard: React.FC = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [dataPointsCount, setDataPointsCount] = useState(0);
-  const [comments, setComments] = useState('');
-  const [data, setData] = useState({
-    'pre-flight-sentiment': '' as SentimentType,
-    'pre-flight-feedback': [] as string[],
-    'in-flight-sentiment': '' as SentimentType,
-    'in-flight-feedback': [] as string[],
-    'post-flight-sentiment': '' as SentimentType,
-    'post-flight-feedback': [] as string[],
-  });
+  const [dataPointsCount, setDataPointsCount] = useState(() => 
+    getFromLocalStorage(STORAGE_KEYS.DATA_POINTS, 0)
+  );
+  const [comments, setComments] = useState(() => 
+    getFromLocalStorage(STORAGE_KEYS.COMMENTS, '')
+  );
+  const [data, setData] = useState(() => 
+    getFromLocalStorage(STORAGE_KEYS.SENTIMENT_DATA, {
+      'pre-flight-sentiment': '' as SentimentType,
+      'pre-flight-feedback': [] as string[],
+      'in-flight-sentiment': '' as SentimentType,
+      'in-flight-feedback': [] as string[],
+      'post-flight-sentiment': '' as SentimentType,
+      'post-flight-feedback': [] as string[],
+    })
+  );
 
   const handleRefresh = async () => {
     setIsLoading(true);
@@ -48,17 +80,27 @@ const Dashboard: React.FC = () => {
       
       // Only update state and show success toast if we received actual data
       if (newData) {
-        setDataPointsCount(Number(newData['Total'] || newData['total'] || 0));
-        setComments(newData['Allcomments'] || '');
+        const dataPoints = Number(newData['Total'] || newData['total'] || 0);
+        const newComments = newData['Allcomments'] || '';
         
-        setData({
+        const updatedData = {
           'pre-flight-sentiment': validateSentimentType(newData['pre-flight-sentiment']),
           'pre-flight-feedback': ensureFeedbackArray(newData['pre-flight-feedback']),
           'in-flight-sentiment': validateSentimentType(newData['in-flight-sentiment']),
           'in-flight-feedback': ensureFeedbackArray(newData['in-flight-feedback']),
           'post-flight-sentiment': validateSentimentType(newData['post-flight-sentiment']),
           'post-flight-feedback': ensureFeedbackArray(newData['post-flight-feedback']),
-        });
+        };
+        
+        // Update state
+        setDataPointsCount(dataPoints);
+        setComments(newComments);
+        setData(updatedData);
+        
+        // Store data in local storage
+        saveToLocalStorage(STORAGE_KEYS.DATA_POINTS, dataPoints);
+        saveToLocalStorage(STORAGE_KEYS.COMMENTS, newComments);
+        saveToLocalStorage(STORAGE_KEYS.SENTIMENT_DATA, updatedData);
         
         // Only show success toast when we actually get data back from API
         toast({
