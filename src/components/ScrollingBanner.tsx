@@ -38,7 +38,7 @@ const ScrollingBanner: React.FC<ScrollingBannerProps> = ({ text }) => {
         .scrolling-text {
           display: inline-flex;
           white-space: nowrap;
-          animation: scrollText 240s linear infinite; /* Increased duration from 120s to 240s to slow down */
+          animation: scrollText 300s linear infinite; /* Increased duration to 300s to slow down */
         }
         
         @keyframes scrollText {
@@ -56,4 +56,3 @@ const ScrollingBanner: React.FC<ScrollingBannerProps> = ({ text }) => {
 };
 
 export default ScrollingBanner;
-
