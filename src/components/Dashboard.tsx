@@ -1,18 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import Header from './Header';
 import SentimentCard, { SentimentType } from './SentimentCard';
 import ScrollingBanner from './ScrollingBanner';
 import { fetchSentimentData } from '@/api/fetchData';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 // Local storage keys
 const STORAGE_KEYS = {
   DATA_POINTS: 'sentiment-data-points',
   COMMENTS: 'sentiment-comments',
-  SENTIMENT_DATA: 'sentiment-data',
-  LAST_REFRESH: 'last-refresh-time'
+  SENTIMENT_DATA: 'sentiment-data'
 };
 
 // Helper function to validate sentiment type
@@ -56,7 +53,6 @@ const getFromLocalStorage = (key: string, defaultValue: any) => {
 const Dashboard: React.FC = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const isMobile = useIsMobile();
   const [dataPointsCount, setDataPointsCount] = useState(() => 
     getFromLocalStorage(STORAGE_KEYS.DATA_POINTS, 0)
   );
@@ -73,23 +69,13 @@ const Dashboard: React.FC = () => {
       'post-flight-feedback': [] as string[],
     })
   );
-  
-  // Track last refresh time for debugging
-  const [lastRefreshTime, setLastRefreshTime] = useState(() =>
-    getFromLocalStorage(STORAGE_KEYS.LAST_REFRESH, null)
-  );
 
   const handleRefresh = async () => {
-    console.log(`Refresh triggered from ${isMobile ? 'mobile' : 'desktop'} device`);
     setIsLoading(true);
 
     try {
       const newData = await fetchSentimentData();
       console.log('Data received from API:', newData);
-      
-      const currentTime = new Date().toISOString();
-      setLastRefreshTime(currentTime);
-      saveToLocalStorage(STORAGE_KEYS.LAST_REFRESH, currentTime);
       
       // Only update state and show success toast if we received actual data
       if (newData) {
@@ -104,12 +90,6 @@ const Dashboard: React.FC = () => {
           'post-flight-sentiment': validateSentimentType(newData['post-flight-sentiment']),
           'post-flight-feedback': ensureFeedbackArray(newData['post-flight-feedback']),
         };
-        
-        console.log(`Updating data for ${isMobile ? 'mobile' : 'desktop'}:`, {
-          dataPoints,
-          comments: newComments ? `${newComments.substring(0, 20)}...` : '(empty)',
-          updatedData
-        });
         
         // Update state
         setDataPointsCount(dataPoints);
@@ -126,13 +106,6 @@ const Dashboard: React.FC = () => {
           title: "Data refreshed",
           description: "Latest sentiment data has been loaded",
         });
-      } else {
-        console.warn('No data received from API');
-        toast({
-          title: "No data available",
-          description: "Couldn't fetch new data. Using cached data instead.",
-          variant: "destructive",
-        });
       }
     } catch (error) {
       console.error('Failed to refresh data:', error);
@@ -147,18 +120,8 @@ const Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    // Add a slight delay to the initial fetch to ensure the component is fully mounted
-    const timer = setTimeout(() => {
-      handleRefresh();
-    }, 300);
-    
-    return () => clearTimeout(timer);
+    handleRefresh();
   }, []);
-  
-  // Debug log to track renders
-  useEffect(() => {
-    console.log(`Dashboard rendered on ${isMobile ? 'mobile' : 'desktop'}, last refresh: ${lastRefreshTime || 'never'}`);
-  }, [isMobile, lastRefreshTime]);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">

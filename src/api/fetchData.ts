@@ -24,25 +24,19 @@ export async function fetchSentimentData(): Promise<SentimentData> {
     // Define the API URL
     const apiUrl = 'https://n8n-1-u40928.vm.elestio.app/webhook/46cf7941-6c47-435b-8711-1f9c83dec351';
     
-    // Timestamp to prevent caching issues on mobile devices
-    const timestamp = new Date().getTime();
-    
-    // Set up request options with no timeout limit and a cache-busting timestamp
+    // Set up request options with no timeout limit
     const options = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
+        'Cache-Control': 'no-cache',
       },
       body: JSON.stringify({
-        requestTime: new Date().toISOString(),
-        timestamp: timestamp // Add timestamp to prevent caching
+        requestTime: new Date().toISOString()
       }),
     };
 
-    console.log('Sending request to API from ' + (typeof window !== 'undefined' && window.innerWidth < 768 ? 'mobile' : 'desktop') + '...', apiUrl);
+    console.log('Sending request to API...', apiUrl);
     
     // Using a longer timeout - 5 minutes to be safe
     const timeoutDuration = 300000; // 5 minutes in milliseconds
@@ -69,8 +63,6 @@ export async function fetchSentimentData(): Promise<SentimentData> {
         mode: 'cors' as RequestMode,
         credentials: 'omit' as RequestCredentials,
       };
-      
-      console.log('Fetch options:', JSON.stringify(fetchOptions, null, 2));
       
       const fetchPromise = fetch(apiUrl, fetchOptions);
       
