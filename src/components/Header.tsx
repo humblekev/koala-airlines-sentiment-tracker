@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { RefreshCw, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LiveIndicator from './LiveIndicator';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HeaderProps {
   onRefresh: () => void;
@@ -10,6 +12,8 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onRefresh, isLoading, dataPointsCount = 0 }) => {
+  const isMobile = useIsMobile();
+  
   return (
     <header className="w-full flex flex-col mb-12 relative pt-4">
       <div className="absolute top-0 left-0">
@@ -28,15 +32,15 @@ const Header: React.FC<HeaderProps> = ({ onRefresh, isLoading, dataPointsCount =
             {isLoading ? 'Refreshing...' : 'Refresh Data'}
           </Button>
           <p className="text-sm text-gray-600 italic max-w-[300px] text-right">
-            Our AI Agents are working hard in the background to fetch and analyse the latest data - this may take up a minute!
+            Our AI Agents are working hard in the background to fetch and analyse the latest data - this may take a few seconds!
           </p>
         </div>
       </div>
       
-      <div className="flex flex-col items-center mt-24 md:mt-16 w-full">
+      <div className="flex flex-col items-center mt-28 md:mt-16 w-full">
         <div className="w-32 h-32 md:w-36 md:h-36 mb-4">
           <img 
-            src="/lovable-uploads/3abccc84-9c4d-4f5e-aa35-20f4dc79fbdf.png" 
+            src="/lovable-uploads/7c055872-73b4-4696-82af-526dddc5c4a6.png" 
             alt="Koala Airline Logo" 
             className="w-full h-full object-contain"
           />

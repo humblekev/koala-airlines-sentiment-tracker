@@ -1,3 +1,4 @@
+
 import { SentimentType } from '@/components/SentimentCard';
 
 interface SentimentData {
@@ -37,25 +38,49 @@ export async function fetchSentimentData(): Promise<SentimentData> {
 
     console.log('Sending request to API...', apiUrl);
     
-    // Using an even longer timeout - 8 minutes to be safe
-    const timeoutDuration = 480000; // 8 minutes in milliseconds
+    // Using a longer timeout - 5 minutes to be safe
+    const timeoutDuration = 300000; // 5 minutes in milliseconds
     
     let timeoutId: NodeJS.Timeout;
     
     // Create a promise for the timeout
     const timeoutPromise = new Promise<never>((_, reject) => {
       timeoutId = setTimeout(() => {
-        reject(new Error('API request timed out after 8 minutes'));
+        reject(new Error('API request timed out after 5 minutes'));
       }, timeoutDuration);
     });
     
-    // Fetch with proper error handling
+    // Fetch with proper error handling and ensure it works on mobile
     try {
-      const fetchPromise = fetch(apiUrl, options);
-      const response = await Promise.race([fetchPromise, timeoutPromise]) as Response;
+      // Use AbortController to ensure fetch can be properly aborted on timeout
+      const controller = new AbortController();
+      const signal = controller.signal;
       
-      // Clear the timeout since we got a response
-      clearTimeout(timeoutId);
+      const fetchOptions = {
+        ...options,
+        signal,
+        // Ensure these settings work on mobile browsers
+        mode: 'cors' as RequestMode,
+        credentials: 'omit' as RequestCredentials,
+      };
+      
+      const fetchPromise = fetch(apiUrl, fetchOptions);
+      
+      // Clear timeout on successful completion
+      const clearTimeoutAndReturn = (response: Response) => {
+        clearTimeout(timeoutId);
+        return response;
+      };
+      
+      const response = await Promise.race([
+        fetchPromise.then(clearTimeoutAndReturn),
+        timeoutPromise
+      ]) as Response;
+      
+      // When timeout occurs, abort the fetch to free resources
+      timeoutPromise.catch(() => {
+        controller.abort();
+      });
       
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
