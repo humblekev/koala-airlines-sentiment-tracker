@@ -1,4 +1,3 @@
-
 import { SentimentType } from '@/components/SentimentCard';
 
 interface SentimentData {
@@ -22,7 +21,7 @@ interface SentimentData {
 export async function fetchSentimentData(): Promise<SentimentData> {
   try {
     // Define the API URL
-    const apiUrl = 'https://n8n-1-u40928.vm.elestio.app/webhook-test/46cf7941-6c47-435b-8711-1f9c83dec351';
+    const apiUrl = 'https://n8n-1-u40928.vm.elestio.app/webhook/46cf7941-6c47-435b-8711-1f9c83dec351';
     
     // Set up request options with no timeout limit
     const options = {

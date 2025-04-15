@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { RefreshCw, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -34,7 +33,7 @@ const Header: React.FC<HeaderProps> = ({ onRefresh, isLoading, dataPointsCount =
         </div>
       </div>
       
-      <div className="flex flex-col items-center mt-16 w-full">
+      <div className="flex flex-col items-center mt-24 md:mt-16 w-full">
         <div className="w-32 h-32 md:w-36 md:h-36 mb-4">
           <img 
             src="/lovable-uploads/3abccc84-9c4d-4f5e-aa35-20f4dc79fbdf.png" 
