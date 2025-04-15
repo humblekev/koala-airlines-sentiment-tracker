@@ -60,9 +60,15 @@ const Header: React.FC<HeaderProps> = ({ onRefresh, isLoading, dataPointsCount =
                   </span>
                 </div>
                 <div className="ml-6 bg-white rounded-lg px-6 py-3 shadow-sm border border-gray-100">
-                  <span className="text-3xl font-bold text-gray-800">
-                    {dataPointsCount.toLocaleString()}
-                  </span>
+                  {isLoading ? (
+                    <span className="text-3xl font-bold text-gray-500">
+                      Loading...
+                    </span>
+                  ) : (
+                    <span className="text-3xl font-bold text-gray-800">
+                      {dataPointsCount.toLocaleString()}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
